@@ -1,6 +1,8 @@
 package ma.rest.tp11_spring_data_rest;
 
+import ma.rest.tp11_spring_data_rest.entities.Client;
 import ma.rest.tp11_spring_data_rest.entities.Compte;
+import ma.rest.tp11_spring_data_rest.repositories.ClientRepository;
 import ma.rest.tp11_spring_data_rest.repositories.CompteRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,13 +20,20 @@ public class Tp11SpringDataRestApplication {
     }
 
     @Bean
-    CommandLineRunner start(CompteRepository compteRepository, RepositoryRestConfiguration restConfiguration) {
+    CommandLineRunner start(CompteRepository compteRepository, ClientRepository clientRepository, RepositoryRestConfiguration restConfiguration){
         return args -> {
             restConfiguration.exposeIdsFor(Compte.class);
-            // Initialisation des comptes
-            compteRepository.save(new Compte(null, Math.random()*9000, new Date(), TypeCompte.EPARGNE));
-            compteRepository.save(new Compte(null, Math.random()*9000, new Date(), TypeCompte.COURANT));
-            compteRepository.save(new Compte(null, Math.random()*9000, new Date(), TypeCompte.EPARGNE));
+
+            Client c1 = clientRepository.save(new Client(null, "Amal", null, null));
+            Client c2 = clientRepository.save(new Client(null, "Ali", null, null));
+
+            compteRepository.save(new Compte(null, Math.random() * 9000, new Date(), TypeCompte.EPARGNE, c1));
+            compteRepository.save(new Compte(null, Math.random() * 9000, new Date(), TypeCompte.COURANT, c1));
+            compteRepository.save(new Compte(null, Math.random() * 9000, new Date(), TypeCompte.EPARGNE, c2));
+
+            compteRepository.findAll().forEach(c -> {
+                System.out.println(c.toString());
+            });
         };
     }
 }
